@@ -1,7 +1,7 @@
 FROM archlinux:latest
 
 # allow use of cache server
-ARG PACMAN_CACHE_SERVER='http://ftp.osuosl.org/pub/archlinux/\$repo/os/\$arch'
+ARG PACMAN_CACHE_SERVER='http://ftp.osuosl.org/pub/archlinux/$repo/os/$arch'
 RUN echo "Server = ${PACMAN_CACHE_SERVER}" > /etc/pacman.d/mirrorlist
 
 RUN pacman -Sy --noconfirm texlive-most && pacman -Scc --noconfirm
