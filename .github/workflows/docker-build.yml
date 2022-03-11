@@ -23,3 +23,14 @@ jobs:
         with:
           push: true
           tags: detjensrobert/arch-pandoc:latest
+
+      - name: Sync README
+        uses: christian-korneck/update-container-description-action@v1
+        env:
+          DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKER_PASS: ${{ secrets.DOCKERHUB_TOKEN }}
+        with:
+          destination_container_repo: detjensrobert/arch-pandoc
+          provider: dockerhub
+          short_description: Arch Linux's Pandoc & TeXLive
+          readme_file: README.md
