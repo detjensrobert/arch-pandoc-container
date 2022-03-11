@@ -24,6 +24,13 @@ jobs:
           push: true
           tags: detjensrobert/arch-pandoc:latest
 
+  readme:
+    runs-on: ubuntu-latest
+    name: Push README to Docker Hub
+    steps:
+      - name: git checkout
+        uses: actions/checkout@v2
+
       - name: Sync README
         uses: christian-korneck/update-container-description-action@v1
         env:
