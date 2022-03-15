@@ -13,5 +13,8 @@ ARG PANDOC_VER=2.17.1.1
 RUN curl -L https://github.com/jgm/pandoc/releases/download/${PANDOC_VER}/pandoc-${PANDOC_VER}-linux-amd64.tar.gz | \
     tar xz --strip-components 1 -C /usr/local
 
+# add some helpful pandoc filters
+RUN pacman -Sy --noconfirm python python-pip && pip install pantable pandoc-include
+
 WORKDIR /data
 ENTRYPOINT ["pandoc"]
