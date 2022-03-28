@@ -5,8 +5,9 @@ and the official [`pandoc/latex`](https://hub.docker.com/repository/docker/pando
 needed LaTeX packages for those macros either.
 
 This Docker container provides Arch's versions of Pandoc and TeXLive, which work just fine, along with some Pandoc
-filters I use sometimes: [`pantable`](https://github.com/ickc/pantable) and
-[`pandoc-include`](https://github.com/DCsunset/pandoc-include).
+filters I use sometimes: [`pantable`](https://github.com/ickc/pantable),
+[`pandoc-include`](https://github.com/DCsunset/pandoc-include), and
+[`pandoc-run-filter`](https://github.com/johnlwhiteman/pandoc-run-filter).
 
 ## Usage:
 

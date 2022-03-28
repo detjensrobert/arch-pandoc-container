@@ -14,7 +14,7 @@ RUN curl -L https://github.com/jgm/pandoc/releases/download/${PANDOC_VER}/pandoc
     tar xz --strip-components 1 -C /usr/local
 
 # add some helpful pandoc filters
-RUN pacman -Sy --noconfirm python python-pip && pip install pantable pandoc-include
+RUN pacman -Sy --noconfirm python python-pip && pip install pantable pandoc-include pandoc-run-filter
 
 WORKDIR /data
 ENTRYPOINT ["pandoc"]
