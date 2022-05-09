@@ -15,6 +15,9 @@ filters I use sometimes: [`pantable`](https://github.com/ickc/pantable),
   - `-v $(pwd):/data`
 - To avoid output being owned by `root`, run the entrypoint as your UID/GID.
   - `-u $(id -u):$(id -g)`
+  - *NOTE: if using rootless containers, e.g. `podman`, don't include this!*
+
+    `root` in the container is already mapped to your normal user.
 
 Use this as a drop-in for standard `pandoc`:
 
