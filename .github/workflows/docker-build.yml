@@ -23,6 +23,8 @@ jobs:
         with:
           push: true
           tags: detjensrobert/arch-pandoc:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
   ## README sync doesnt work with 2FA enabled :rattled:
   # readme:
