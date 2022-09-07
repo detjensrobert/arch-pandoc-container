@@ -2,13 +2,17 @@
 
 Ubuntu's version of [Pandoc](https://pandoc.org) is old and doesn't like some raw LaTeX macros I use for some classes,
 and the official [`pandoc/latex`](https://hub.docker.com/repository/docker/pandoc/latex) image does not have all of the
-needed LaTeX packages for those macros either. This Docker container provides Arch's versions of Pandoc and TeXLive, which work just fine. 
+needed LaTeX packages for those macros either. This Docker container provides Arch's versions of Pandoc and TeXLive, which work just fine.
 
 Additionally, this bundles MLA, APA, and IEEE [CSLs](https://github.com/citation-style-language/styles) for citations, along with some Pandoc
 filters:
 - [`pantable`](https://github.com/ickc/pantable)
 - [`pandoc-include`](https://github.com/DCsunset/pandoc-include)
 - [`pandoc-run-filter`](https://github.com/johnlwhiteman/pandoc-run-filter)
+
+## LaTeX Engines
+
+The `:latest` tag ships with `tectonic` as the latex engine for a much smaller container size, but may not work for all LaTeX packages as it uses LuaTeX instead of TexLive. The `:full` tag has full TeXLive installation, but at the cost of a multi-gigabyte container.
 
 ## Usage:
 

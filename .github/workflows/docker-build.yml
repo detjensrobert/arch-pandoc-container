@@ -18,11 +18,24 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push
+      - name: Build and push minimal
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: detjensrobert/arch-pandoc:latest
+          tags: |
+            detjensrobert/arch-pandoc:latest
+            detjensrobert/arch-pandoc:tectonic
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push full
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          file: Dockerfile.full
+          tags: |
+            detjensrobert/arch-pandoc:full
+            detjensrobert/arch-pandoc:texlive
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
