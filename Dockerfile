@@ -22,4 +22,4 @@ ADD https://github.com/citation-style-language/styles/raw/master/apa.csl \
 		/root/.pandoc/csl/
 
 WORKDIR /data
-ENTRYPOINT ["pandoc", "--pdf-engine=tectonic"
+ENTRYPOINT ["pandoc", "--pdf-engine=tectonic"]
