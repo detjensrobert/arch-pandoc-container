@@ -1,4 +1,4 @@
-FROM archlinux:latest
+FROM docker.io/archlinux:latest
 
 RUN pacman -Sy --noconfirm tectonic && pacman -Scc --noconfirm
 
