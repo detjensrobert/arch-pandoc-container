@@ -26,6 +26,13 @@ The `:full` tag has the more 'standard' [TeXLive](https://www.tug.org/texlive) i
 - `:full`
 - `:<version>-texlive` (e.g. `:1.19.2-texlive`)
 
+Images are available both on [Dockerhub](https://hub.docker.com/r/detjensrobert/arch-pandoc) and on [GHCR](https://github.com/detjensrobert/arch-pandoc-container/pkgs/container/arch-pandoc):
+
+```sh
+docker pull docker.io/detjensrobert/arch-pandoc
+docker pull ghcr.io/detjensrobert/arch-pandoc
+```
+
 ## Usage:
 
 Use this as a drop-in for standard `pandoc`:
