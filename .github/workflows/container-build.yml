@@ -20,7 +20,7 @@ jobs:
         id: build_image
         uses: redhat-actions/buildah-build@v2
         with:
-          image: detjensrobert/arch-pandoc
+          image: arch-pandoc
           tags: |
             latest
             ${{ env.PANDOC_VERSION }}
@@ -34,7 +34,7 @@ jobs:
         id: build_image_full
         uses: redhat-actions/buildah-build@v2
         with:
-          image: detjensrobert/arch-pandoc
+          image: arch-pandoc
           tags: |
             full
             ${{ env.PANDOC_VERSION }}-texlive
@@ -51,7 +51,7 @@ jobs:
           tags: |
             ${{ steps.build_image.outputs.tags }}
             ${{ steps.build_image_full.outputs.tags }}
-          registry: docker.io
+          registry: docker.io/detjensrobert
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
