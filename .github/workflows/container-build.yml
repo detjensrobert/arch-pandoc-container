@@ -51,8 +51,8 @@ jobs:
           tags: |
             ${{ steps.build_image.outputs.tags }}
             ${{ steps.build_image_full.outputs.tags }}
-          registry: docker.io/detjensrobert
-          username: detjensrobert
+          registry: docker.io
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Push To GHCR
