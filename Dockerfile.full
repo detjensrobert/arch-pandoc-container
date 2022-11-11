@@ -1,9 +1,5 @@
 FROM detjensrobert/arch-pandoc:latest
 
-# allow use of cache server
-ARG PACMAN_CACHE_SERVER
-RUN [ -z "${PACMAN_CACHE_SERVER}" ] || echo "Server = ${PACMAN_CACHE_SERVER}" > /etc/pacman.d/mirrorlist
-
 RUN pacman -Sy --noconfirm texlive-most && pacman -Scc --noconfirm
 
 WORKDIR /data

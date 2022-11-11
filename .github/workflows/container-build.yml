@@ -1,0 +1,87 @@
+name: container-build
+
+on:
+  push:
+    branches:
+      - 'main'
+  workflow_dispatch:
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set upstream Pandoc version
+        id: pandoc-version
+        run: |
+          echo "PANDOC_VERSION=${curl -sS https://api.github.com/repos/jgm/pandoc/releases/latest | jq -r .tag_name}" >> $GITHUB_ENV
+
+      - name: Build Image
+        id: build_image
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: detjensrobert/arch-pandoc
+          tags: |
+            latest
+            ${{ env.PANDOC_VERSION }}
+            ${{ env.PANDOC_VERSION }}-tectonic
+          containerfiles: |
+            ./Dockerfile
+          build-args: |
+            PANDOC_VERSION=${{ env.PANDOC_VERSION }}
+
+      - name: Build Image
+        id: build_image_full
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: detjensrobert/arch-pandoc
+          tags: |
+            full
+            ${{ env.PANDOC_VERSION }}-texlive
+          containerfiles: |
+            ./Dockerfile.full
+          build-args: |
+            PANDOC_VERSION=${{ env.PANDOC_VERSION }}
+
+      - name: Push To Docker Hub
+        uses: redhat-actions/push-to-registry
+        id: push
+        with:
+          image: ${{ steps.build_image.outputs.image }}
+          tags: |
+            ${{ steps.build_image.outputs.tags }}
+            ${{ steps.build_image_full.outputs.tags }}
+          registry: docker.io/detjensrobert/arch-pandoc
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Push To GHCR
+        uses: redhat-actions/push-to-registry
+        id: push
+        with:
+          image: ${{ steps.build_image.outputs.image }}
+          tags: ${{ steps.build_image.outputs.tags }}
+          registry: ghcr.io/${{ github.repository_owner }}
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
+
+  ## README sync doesnt work with 2FA enabled :rattled:
+  # readme:
+  #   runs-on: ubuntu-latest
+  #   name: Push README to Docker Hub
+  #   steps:
+  #     - name: git checkout
+  #       uses: actions/checkout@v2
+  #
+  #     - name: Sync README
+  #       uses: christian-korneck/update-container-description-action@v1
+  #       env:
+  #         DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
+  #         DOCKER_PASS: ${{ secrets.DOCKERHUB_TOKEN }}
+  #       with:
+  #         destination_container_repo: detjensrobert/arch-pandoc
+  #         provider: dockerhub
+  #         short_description: Arch Linux's Pandoc & TeXLive
+  #         readme_file: README.md

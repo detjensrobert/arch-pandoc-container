@@ -2,27 +2,31 @@
 
 Ubuntu's version of [Pandoc](https://pandoc.org) is old and doesn't like some raw LaTeX macros I use for some classes,
 and the official [`pandoc/latex`](https://hub.docker.com/repository/docker/pandoc/latex) image does not have all of the
-needed LaTeX packages for those macros either. This Docker container provides Arch's versions of Pandoc and TeXLive, which work just fine.
+needed LaTeX packages for those macros either. This Docker container provides Arch's versions of Pandoc and TeXLive,
+which work just fine.
 
 Additionally, this bundles MLA, APA, and IEEE [CSLs](https://github.com/citation-style-language/styles) for citations, along with some Pandoc
 filters:
+
 - [`pantable`](https://github.com/ickc/pantable)
 - [`pandoc-include`](https://github.com/DCsunset/pandoc-include)
-- [`pandoc-run-filter`](https://github.com/johnlwhiteman/pandoc-run-filter)
 
-## LaTeX Engines
+## Tags
 
-The `:latest` tag ships with `tectonic` as the latex engine for a much smaller container size, but may not work for all LaTeX packages as it uses LuaTeX instead of TexLive. The `:full` tag has full TeXLive installation, but at the cost of a multi-gigabyte container.
+Images are tagged based on the Pandoc version and the LaTeX engine included.
+
+The `:latest` tag ships with [Tectonic](https://tectonic-typesetting.github.io) as the LaTeX engine for a much smaller container size, but may not work for all LaTeX packages.
+
+- `:latest`
+- `:<version>` (e.g. `:1.19.2`)
+- `:<version>-tectonic` (e.g. `:1.19.2-tectonic`)
+
+The `:full` tag has the more 'standard' [TeXLive](https://www.tug.org/texlive) installation, but is a much larger container (over 2GB!).
+
+- `:full`
+- `:<version>-texlive` (e.g. `:1.19.2-texlive`)
 
 ## Usage:
-
-- This container expects all necessary files to be mounted at `/data` in the container.
-  - `-v $(pwd):/data`
-- To avoid output being owned by `root`, run the entrypoint as your UID/GID.
-  - `-u $(id -u):$(id -g)`
-  - *NOTE: if using rootless containers, e.g. `podman`, don't include this!*
-
-    `root` in the container is already mapped to your normal user.
 
 Use this as a drop-in for standard `pandoc`:
 
@@ -30,7 +34,14 @@ Use this as a drop-in for standard `pandoc`:
 docker run --rm -v $(pwd):/data -u $(id -u):$(id -g) detjensrobert/arch-pandoc -s file.md -o file.pdf ...
 ```
 
-Add this shell function to your shell's rc for convenience:
+- This container expects all necessary files to be mounted at `/data` in the container: `-v $(pwd):/data`
+
+- To avoid output being owned by `root`, run the entrypoint as your UID/GID: `-u $(id -u):$(id -g)`
+  > NOTE: if using rootless containers, e.g. `podman`, this is not needed! `root` in the container is already mapped to your normal user.
+
+  > NOTE 2: If this causes permission errors with a Tectonic image, try switching to the TeXLive image instead.
+
+Add this shell function to your shell config for convenience:
 
 ```bash
 pandoc-docker () {
@@ -42,5 +53,5 @@ md2pdf-docker () {
 }
 
 # usage:
-md2pdf-docker some-document.md --filter pantable
+md2pdf-docker some-document.md --filter pantable  # -> creates some-document.pdf
 ```
