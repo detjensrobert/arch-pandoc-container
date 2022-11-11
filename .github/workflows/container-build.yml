@@ -51,7 +51,7 @@ jobs:
           tags: |
             ${{ steps.build_image.outputs.tags }}
             ${{ steps.build_image_full.outputs.tags }}
-          registry: docker.io/detjensrobert/arch-pandoc
+          registry: docker.io/${{ secrets.DOCKERHUB_USERNAME }}
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
@@ -60,7 +60,9 @@ jobs:
         id: push-full
         with:
           image: ${{ steps.build_image.outputs.image }}
-          tags: ${{ steps.build_image.outputs.tags }}
+          tags: |
+            ${{ steps.build_image.outputs.tags }}
+            ${{ steps.build_image_full.outputs.tags }}
           registry: ghcr.io/${{ github.repository_owner }}
           username: ${{ github.actor }}
           password: ${{ github.token }}

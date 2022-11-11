@@ -1,4 +1,5 @@
-FROM detjensrobert/arch-pandoc:latest
+ARG PANDOC_VERSION=latest
+FROM detjensrobert/arch-pandoc:${PANDOC_VERSION}
 
 RUN pacman -Sy --noconfirm texlive-most && pacman -Scc --noconfirm
 
