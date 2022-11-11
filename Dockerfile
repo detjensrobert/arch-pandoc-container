@@ -9,13 +9,12 @@ RUN curl -L https://github.com/jgm/pandoc/releases/download/${PANDOC_VERSION}/pa
     tar xz --strip-components 1 -C /usr/local
 
 # add some helpful pandoc filters
-RUN pacman -Sy --noconfirm python python-pip && pip install pantable pandoc-include
+RUN pacman -Sy --noconfirm python python-pip && pacman -Scc --noconfirm && pip install pantable pandoc-include
 
 # add some csls
-ADD https://github.com/citation-style-language/styles/raw/master/apa.csl \
-		https://github.com/citation-style-language/styles/raw/master/ieee.csl \
-		https://github.com/citation-style-language/styles/raw/master/modern-language-association.csl \
-		/root/.pandoc/csl/
+RUN curl -sS https://github.com/citation-style-language/styles/raw/master/apa.csl -o /root/.pandoc/csl/apa.csl && \
+		curl -sS https://github.com/citation-style-language/styles/raw/master/ieee.csl -o /root/.pandoc/csl/ieee.csl && \
+		curl -sS https://github.com/citation-style-language/styles/raw/master/modern-language-association.csl -o /root/.pandoc/csl/mla.csl
 
 WORKDIR /data
 ENTRYPOINT ["pandoc", "--pdf-engine=tectonic"]

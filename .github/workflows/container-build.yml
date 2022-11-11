@@ -16,7 +16,7 @@ jobs:
         run: |
           echo "PANDOC_VERSION=$(curl -sS https://api.github.com/repos/jgm/pandoc/releases/latest | jq -r .tag_name)" >> $GITHUB_ENV
 
-      - name: Build Image
+      - name: Build Tectonic Image
         id: build_image
         uses: redhat-actions/buildah-build@v2
         with:
@@ -30,7 +30,7 @@ jobs:
           build-args: |
             PANDOC_VERSION=${{ env.PANDOC_VERSION }}
 
-      - name: Build Image
+      - name: Build TexLive Image
         id: build_image_full
         uses: redhat-actions/buildah-build@v2
         with:
