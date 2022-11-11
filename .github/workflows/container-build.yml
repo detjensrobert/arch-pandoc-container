@@ -12,10 +12,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Set upstream Pandoc version
-        id: pandoc-version
+      - name: Fetch latest Pandoc version
         run: |
-          echo "PANDOC_VERSION=${curl -sS https://api.github.com/repos/jgm/pandoc/releases/latest | jq -r .tag_name}" >> $GITHUB_ENV
+          echo "PANDOC_VERSION=$(curl -sS https://api.github.com/repos/jgm/pandoc/releases/latest | jq -r .tag_name)" >> $GITHUB_ENV
 
       - name: Build Image
         id: build_image
@@ -45,7 +44,7 @@ jobs:
             PANDOC_VERSION=${{ env.PANDOC_VERSION }}
 
       - name: Push To Docker Hub
-        uses: redhat-actions/push-to-registry
+        uses: redhat-actions/push-to-registry@v2
         id: push
         with:
           image: ${{ steps.build_image.outputs.image }}
@@ -57,7 +56,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Push To GHCR
-        uses: redhat-actions/push-to-registry
+        uses: redhat-actions/push-to-registry@v2
         id: push
         with:
           image: ${{ steps.build_image.outputs.image }}
