@@ -19,14 +19,14 @@ jobs:
             package: tectonic
             tags: |
               latest
-              ${{ env.PANDOC_VERSION }}
-              ${{ env.PANDOC_VERSION }}-tectonic
+              $PANDOC_VERSION
+              $PANDOC_VERSION-tectonic
 
           - engine: latex
             package: texlive-most
             tags: |
               full
-              ${{ env.PANDOC_VERSION }}-texlive
+              $PANDOC_VERSION--texlive
 
     steps:
       - uses: actions/checkout@v2
