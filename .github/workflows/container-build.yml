@@ -6,67 +6,65 @@ on:
       - 'main'
   workflow_dispatch:
 
+env:
+  PANDOC_VERSION: '2.19.2'
+
 jobs:
-  build-and-push:
+  build-images:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - engine: tectonic
+            package: tectonic
+            tags: |
+              latest
+              ${{ env.PANDOC_VERSION }}
+              ${{ env.PANDOC_VERSION }}-tectonic
+
+          - engine: latex
+            package: texlive-most
+            tags: |
+              full
+              ${{ env.PANDOC_VERSION }}-texlive
+
     steps:
       - uses: actions/checkout@v2
 
-      - name: Fetch latest Pandoc version
-        run: |
-          echo "PANDOC_VERSION=$(curl -sS https://api.github.com/repos/jgm/pandoc/releases/latest | jq -r .tag_name)" >> $GITHUB_ENV
-
-      - name: Build Tectonic Image
+      - name: Build Image
         id: build_image
         uses: redhat-actions/buildah-build@v2
         with:
           image: arch-pandoc
           tags: |
-            latest
-            ${{ env.PANDOC_VERSION }}
-            ${{ env.PANDOC_VERSION }}-tectonic
-          containerfiles: |
-            ./Dockerfile
+            ${{ matrix.tags }}
+          containerfiles: ./Dockerfile
           build-args: |
             PANDOC_VERSION=${{ env.PANDOC_VERSION }}
-
-      - name: Build TexLive Image
-        id: build_image_full
-        uses: redhat-actions/buildah-build@v2
-        with:
-          image: arch-pandoc
-          tags: |
-            full
-            ${{ env.PANDOC_VERSION }}-texlive
-          containerfiles: |
-            ./Dockerfile.full
-          build-args: |
-            PANDOC_VERSION=${{ env.PANDOC_VERSION }}
+            PDF_ENGINE=${{ matrix.engine }}
+            PDF_ENGINE_PACKAGE=${{ matrix.package }}
 
       - name: Push To Docker Hub
         uses: redhat-actions/push-to-registry@v2
-        id: push
+        id: push-docker
         with:
           image: ${{ steps.build_image.outputs.image }}
           tags: |
             ${{ steps.build_image.outputs.tags }}
-            ${{ steps.build_image_full.outputs.tags }}
-          registry: docker.io/detjensrobert
+          registry: docker.io/${{ secrets.DOCKERHUB_USERNAME }}
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Push To GHCR
         uses: redhat-actions/push-to-registry@v2
-        id: push-full
+        id: push-ghcr
         with:
           image: ${{ steps.build_image.outputs.image }}
           tags: |
             ${{ steps.build_image.outputs.tags }}
-            ${{ steps.build_image_full.outputs.tags }}
           registry: ghcr.io/${{ github.repository_owner }}
           username: ${{ github.actor }}
           password: ${{ github.token }}
-
 
   ## README sync doesnt work with 2FA enabled :rattled:
   # readme:

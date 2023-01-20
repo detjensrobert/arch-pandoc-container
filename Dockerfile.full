@@ -1,7 +1,0 @@
-ARG PANDOC_VERSION=latest
-FROM detjensrobert/arch-pandoc:${PANDOC_VERSION}
-
-RUN pacman -Sy --noconfirm texlive-most && pacman -Scc --noconfirm
-
-WORKDIR /data
-ENTRYPOINT ["pandoc"]
