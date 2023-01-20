@@ -18,13 +18,13 @@ Images are tagged based on the Pandoc version and the LaTeX engine included.
 The `:latest` tag ships with [Tectonic](https://tectonic-typesetting.github.io) as the LaTeX engine for a much smaller container size, but may not work for all LaTeX packages.
 
 - `:latest`
-- `:<version>` (e.g. `:1.19.2`)
-- `:<version>-tectonic` (e.g. `:1.19.2-tectonic`)
+- `:<version>` (e.g. `:3.0`)
+- `:<version>-tectonic` (e.g. `:3.0-tectonic`)
 
 The `:full` tag has the more 'standard' [TeXLive](https://www.tug.org/texlive) installation, but is a much larger container (over 2GB!).
 
 - `:full`
-- `:<version>-texlive` (e.g. `:1.19.2-texlive`)
+- `:<version>-texlive` (e.g. `:3.0-texlive`)
 
 Images are available both on [Dockerhub](https://hub.docker.com/r/detjensrobert/arch-pandoc) and on [GHCR](https://github.com/detjensrobert/arch-pandoc-container/pkgs/container/arch-pandoc):
 
