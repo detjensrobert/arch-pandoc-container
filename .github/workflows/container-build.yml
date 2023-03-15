@@ -29,6 +29,8 @@ jobs:
             PANDOC_VERSION=${{ env.PANDOC_VERSION }}
           oci: true
           layers: true
+          extra-args:
+            --cache-from ghcr.io/${{ github.repository_owner }}/arch-pandoc
 
       - name: Build Image (Texlive)
         id: build_image_texlive
@@ -45,18 +47,8 @@ jobs:
             PDF_ENGINE_PACKAGE=texlive-most
           oci: true
           layers: true
-
-      - name: Push To Docker Hub
-        uses: redhat-actions/push-to-registry@v2
-        id: push-docker
-        with:
-          image: ${{ steps.build_image_tectonic.outputs.image }}
-          tags: |
-            ${{ steps.build_image_tectonic.outputs.tags }}
-            ${{ steps.build_image_texlive.outputs.tags }}
-          registry: docker.io/${{ secrets.DOCKERHUB_USERNAME }}
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          extra-args:
+            --cache-from ghcr.io/${{ github.repository_owner }}/arch-pandoc
 
       - name: Push To GHCR
         uses: redhat-actions/push-to-registry@v2
@@ -69,3 +61,15 @@ jobs:
           registry: ghcr.io/${{ github.repository_owner }}
           username: ${{ github.actor }}
           password: ${{ github.token }}
+
+      - name: Push To Docker Hub
+        uses: redhat-actions/push-to-registry@v2
+        id: push-docker
+        with:
+          image: ${{ steps.build_image_tectonic.outputs.image }}
+          tags: |
+            ${{ steps.build_image_tectonic.outputs.tags }}
+            ${{ steps.build_image_texlive.outputs.tags }}
+          registry: docker.io/${{ secrets.DOCKERHUB_USERNAME }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
