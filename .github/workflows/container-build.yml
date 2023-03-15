@@ -27,6 +27,8 @@ jobs:
           containerfiles: ./Dockerfile
           build-args: |
             PANDOC_VERSION=${{ env.PANDOC_VERSION }}
+          oci: true
+          layers: true
 
       - name: Build Image (Texlive)
         id: build_image_texlive
@@ -41,12 +43,14 @@ jobs:
             PANDOC_VERSION=${{ env.PANDOC_VERSION }}
             PDF_ENGINE=texlive
             PDF_ENGINE_PACKAGE=texlive-most
+          oci: true
+          layers: true
 
       - name: Push To Docker Hub
         uses: redhat-actions/push-to-registry@v2
         id: push-docker
         with:
-          image: ${{ steps.build_image.outputs.image }}
+          image: ${{ steps.build_image_tectonic.outputs.image }}
           tags: |
             ${{ steps.build_image_tectonic.outputs.tags }}
             ${{ steps.build_image_texlive.outputs.tags }}
@@ -58,7 +62,7 @@ jobs:
         uses: redhat-actions/push-to-registry@v2
         id: push-ghcr
         with:
-          image: ${{ steps.build_image.outputs.image }}
+          image: ${{ steps.build_image_tectonic.outputs.image }}
           tags: |
             ${{ steps.build_image_tectonic.outputs.tags }}
             ${{ steps.build_image_texlive.outputs.tags }}
