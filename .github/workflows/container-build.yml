@@ -6,43 +6,38 @@ on:
       - 'main'
   workflow_dispatch:
 
-env:
-  PANDOC_VERSION: '3.1'
-
 jobs:
   build-images:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        include:
-          - engine: tectonic
-            package: tectonic
-            tags: |
-              latest
-              $PANDOC_VERSION
-              $PANDOC_VERSION-tectonic
-
-          - engine: latex
-            package: texlive-most
-            tags: |
-              full
-              $PANDOC_VERSION-texlive
-
     steps:
       - uses: actions/checkout@v2
 
-      - name: Build Image
-        id: build_image
+      - name: Build Image (Tectonic)
+        id: build_image_tectonic
         uses: redhat-actions/buildah-build@v2
         with:
           image: arch-pandoc
           tags: |
-            ${{ matrix.tags }}
+            latest
+            ${{ env.PANDOC_VERSION }}
+            ${{ env.PANDOC_VERSION }}-tectonic
           containerfiles: ./Dockerfile
           build-args: |
             PANDOC_VERSION=${{ env.PANDOC_VERSION }}
-            PDF_ENGINE=${{ matrix.engine }}
-            PDF_ENGINE_PACKAGE=${{ matrix.package }}
+
+      - name: Build Image (Texlive)
+        id: build_image_texlive
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: arch-pandoc
+          tags: |
+            latest-texlive
+            ${{ env.PANDOC_VERSION }}-texlive
+          containerfiles: ./Dockerfile
+          build-args: |
+            PANDOC_VERSION=${{ env.PANDOC_VERSION }}
+            PDF_ENGINE=texlive
+            PDF_ENGINE_PACKAGE=texlive-most
 
       - name: Push To Docker Hub
         uses: redhat-actions/push-to-registry@v2
@@ -50,7 +45,8 @@ jobs:
         with:
           image: ${{ steps.build_image.outputs.image }}
           tags: |
-            ${{ steps.build_image.outputs.tags }}
+            ${{ steps.build_image_tectonic.outputs.tags }}
+            ${{ steps.build_image_texlive.outputs.tags }}
           registry: docker.io/${{ secrets.DOCKERHUB_USERNAME }}
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -61,26 +57,8 @@ jobs:
         with:
           image: ${{ steps.build_image.outputs.image }}
           tags: |
-            ${{ steps.build_image.outputs.tags }}
+            ${{ steps.build_image_tectonic.outputs.tags }}
+            ${{ steps.build_image_texlive.outputs.tags }}
           registry: ghcr.io/${{ github.repository_owner }}
           username: ${{ github.actor }}
           password: ${{ github.token }}
-
-  ## README sync doesnt work with 2FA enabled :rattled:
-  # readme:
-  #   runs-on: ubuntu-latest
-  #   name: Push README to Docker Hub
-  #   steps:
-  #     - name: git checkout
-  #       uses: actions/checkout@v2
-  #
-  #     - name: Sync README
-  #       uses: christian-korneck/update-container-description-action@v1
-  #       env:
-  #         DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
-  #         DOCKER_PASS: ${{ secrets.DOCKERHUB_TOKEN }}
-  #       with:
-  #         destination_container_repo: detjensrobert/arch-pandoc
-  #         provider: dockerhub
-  #         short_description: Arch Linux's Pandoc & TeXLive
-  #         readme_file: README.md
