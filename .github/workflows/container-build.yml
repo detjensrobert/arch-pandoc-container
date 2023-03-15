@@ -6,6 +6,9 @@ on:
       - 'main'
   workflow_dispatch:
 
+env:
+  PANDOC_VERSION: 3.1.1
+
 jobs:
   build-images:
     runs-on: ubuntu-latest
