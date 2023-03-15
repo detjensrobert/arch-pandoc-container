@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  PANDOC_VERSION: '3.0'
+  PANDOC_VERSION: '3.1'
 
 jobs:
   build-images:
@@ -26,7 +26,7 @@ jobs:
             package: texlive-most
             tags: |
               full
-              $PANDOC_VERSION--texlive
+              $PANDOC_VERSION-texlive
 
     steps:
       - uses: actions/checkout@v2
