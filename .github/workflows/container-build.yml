@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  PANDOC_VERSION: 3.1.2
+  PANDOC_VERSION: 3.1.4
 
 jobs:
   build-images:

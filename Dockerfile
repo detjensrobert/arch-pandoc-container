@@ -15,7 +15,7 @@ RUN pacman --noconfirm --cachedir=/tmp -q -Sy ${PDF_ENGINE_PACKAGE} && \
 		rm -rf /tmp*
 
 # use upstream static binary as to not pull in a whackton of haskell deps
-ARG PANDOC_VERSION=3.1.2
+ARG PANDOC_VERSION=3.1.4
 RUN curl -sSL https://github.com/jgm/pandoc/releases/download/${PANDOC_VERSION}/pandoc-${PANDOC_VERSION}-linux-amd64.tar.gz | \
     tar xz --strip-components 1 -C /usr/local
 
