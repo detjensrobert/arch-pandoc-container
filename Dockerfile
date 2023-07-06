@@ -1,3 +1,13 @@
+FROM docker.io/zocker160/aur-builder as builder
+
+# install pandoc and filters from aur since installing packages system-wide via
+# pip is blocked now (good)
+USER builder
+RUN yay -Sy --noconfirm --noeditmenu --nodiffmenu \
+			pandoc-bin python-pantable python-pandoc-include && \
+		mkdir /build/packages && \
+		find /build/.cache/yay/ -name '*.pkg.tar.zst' | xargs -I _ mv _ /build/packages/
+
 FROM docker.io/archlinux:latest
 
 # add some csls
@@ -8,16 +18,12 @@ RUN mkdir -p /root/.pandoc/csl/ && \
 
 ARG PDF_ENGINE=tectonic
 ARG PDF_ENGINE_PACKAGE=${PDF_ENGINE}
-RUN pacman --noconfirm --cachedir=/tmp -q -Sy ${PDF_ENGINE_PACKAGE} && \
-		# also add some helpful pandoc filters
-		pacman --noconfirm --cachedir=/tmp -q -Sy python python-pip && \
-		pip --cache-dir=/tmp install pantable pandoc-include && \
+RUN pacman -Sy --noconfirm --cachedir=/tmp ${PDF_ENGINE_PACKAGE} && \
 		rm -rf /tmp*
 
-# use upstream static binary as to not pull in a whackton of haskell deps
-ARG PANDOC_VERSION=3.1.4
-RUN curl -sSL https://github.com/jgm/pandoc/releases/download/${PANDOC_VERSION}/pandoc-${PANDOC_VERSION}-linux-amd64.tar.gz | \
-    tar xz --strip-components 1 -C /usr/local
+COPY --from=builder /build/packages /tmp/packages
+RUN pacman -U --noconfirm --cachedir=/tmp /tmp/packages/* && \
+		rm -rf /tmp*
 
 WORKDIR /data
 ENV PDF_ENGINE=${PDF_ENGINE}

@@ -26,7 +26,7 @@ jobs:
             ${{ env.PANDOC_VERSION }}-tectonic
           containerfiles: ./Dockerfile
           build-args: |
-            PANDOC_VERSION=${{ env.PANDOC_VERSION }}
+            PDF_ENGINE=tectonic
           oci: true
           layers: true
           extra-args:
@@ -42,7 +42,6 @@ jobs:
             ${{ env.PANDOC_VERSION }}-texlive
           containerfiles: ./Dockerfile
           build-args: |
-            PANDOC_VERSION=${{ env.PANDOC_VERSION }}
             PDF_ENGINE=texlive
             PDF_ENGINE_PACKAGE=texlive-most
           oci: true
