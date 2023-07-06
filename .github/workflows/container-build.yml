@@ -43,7 +43,6 @@ jobs:
           containerfiles: ./Dockerfile
           build-args: |
             PDF_ENGINE=texlive
-            PDF_ENGINE_PACKAGE=texlive-most
           oci: true
           layers: true
           extra-args:
