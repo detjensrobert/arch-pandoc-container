@@ -27,7 +27,7 @@ RUN pacman -U --noconfirm \
 
 # use upstream static binary to control version
 # and not pull in a whackton of haskell deps in final container
-ARG PANDOC_VERSION=3.1.3
+ARG PANDOC_VERSION=3.1.8
 RUN curl -sSL https://github.com/jgm/pandoc/releases/download/${PANDOC_VERSION}/pandoc-${PANDOC_VERSION}-linux-amd64.tar.gz | \
     tar xz --strip-components 1 -C /usr/local
 
