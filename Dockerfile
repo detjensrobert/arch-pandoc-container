@@ -17,13 +17,13 @@ RUN mkdir -p /root/.pandoc/csl/ && \
     curl -sS https://github.com/citation-style-language/styles/raw/master/modern-language-association.csl -o /root/.pandoc/csl/mla.csl
 
 RUN pacman -Sy --noconfirm --cachedir=/tmp tectonic && \
-    rm -rf /tmp*
+    rm -rf /tmp/*
 
 COPY --from=builder /build/packages /tmp/packages
 RUN pacman -U --noconfirm \
       --assume-installed pandoc-cli \
       --cachedir=/tmp /tmp/packages/* && \
-    rm -rf /tmp*
+    rm -rf /tmp/*
 
 # use upstream static binary to control version
 # and not pull in a whackton of haskell deps in final container
