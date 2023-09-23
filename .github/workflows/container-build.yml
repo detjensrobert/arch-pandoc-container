@@ -13,10 +13,10 @@ jobs:
   build-images:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Build Image (Tectonic)
-        id: build_image_tectonic
+        id: build-tectonic
         uses: redhat-actions/buildah-build@v2
         with:
           image: arch-pandoc
@@ -26,23 +26,23 @@ jobs:
             ${{ env.PANDOC_VERSION }}-tectonic
           containerfiles: ./Dockerfile
           build-args: |
-            PDF_ENGINE=tectonic
+            PANDOC_VERSION=$${{ env.PANDOC_VERSION }}
           oci: true
           layers: true
           extra-args:
             --cache-from ghcr.io/${{ github.repository_owner }}/arch-pandoc
 
       - name: Build Image (Texlive)
-        id: build_image_texlive
+        id: build-texlive
         uses: redhat-actions/buildah-build@v2
         with:
           image: arch-pandoc
           tags: |
             latest-texlive
             ${{ env.PANDOC_VERSION }}-texlive
-          containerfiles: ./Dockerfile
+          containerfiles: ./Dockerfile.texlive
           build-args: |
-            PDF_ENGINE=texlive
+            PANDOC_VERSION=$${{ env.PANDOC_VERSION }}
           oci: true
           layers: true
           extra-args:

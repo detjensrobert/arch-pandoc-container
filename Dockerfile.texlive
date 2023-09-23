@@ -16,7 +16,7 @@ RUN mkdir -p /root/.pandoc/csl/ && \
     curl -sS https://github.com/citation-style-language/styles/raw/master/ieee.csl -o /root/.pandoc/csl/ieee.csl && \
     curl -sS https://github.com/citation-style-language/styles/raw/master/modern-language-association.csl -o /root/.pandoc/csl/mla.csl
 
-RUN pacman -Sy --noconfirm --cachedir=/tmp tectonic && \
+RUN pacman -Sy --noconfirm --cachedir=/tmp texlive-meta && \
     rm -rf /tmp*
 
 COPY --from=builder /build/packages /tmp/packages
@@ -32,4 +32,4 @@ RUN curl -sSL https://github.com/jgm/pandoc/releases/download/${PANDOC_VERSION}/
     tar xz --strip-components 1 -C /usr/local
 
 WORKDIR /data
-ENTRYPOINT ["pandoc", "--pdf-engine=tectonic"]
+ENTRYPOINT ["pandoc", "--pdf-engine=pdflatex"]
