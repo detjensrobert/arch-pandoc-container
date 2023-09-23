@@ -8,6 +8,10 @@ RUN yay -Sy --noconfirm --noeditmenu --nodiffmenu \
     mkdir /build/packages && \
     find /build/.cache/yay/ -name '*.pkg.tar.zst' | xargs -I _ mv _ /build/packages/
 
+# also create dummy pandoc package so filter deps are happy in final container
+RUN echo -e "pkgname=pandoc-dummy\npkgver=9.99\npkgrel=1\narch=('any')\nprovides=(pandoc pandoc-cli)" > PKGBUILD.pandoc-dummy && \
+    PKGDEST=/build/packages/ makepkg -p PKGBUILD.pandoc-dummy
+
 FROM docker.io/archlinux
 
 # add some csls
@@ -20,9 +24,7 @@ RUN pacman -Sy --noconfirm --cachedir=/tmp tectonic && \
     rm -rf /tmp/*
 
 COPY --from=builder /build/packages /tmp/packages
-RUN pacman -U --noconfirm \
-      --assume-installed pandoc-cli \
-      --cachedir=/tmp /tmp/packages/* && \
+RUN pacman -U --noconfirm --cachedir=/tmp /tmp/packages/* && \
     rm -rf /tmp/*
 
 # use upstream static binary to control version
@@ -30,6 +32,11 @@ RUN pacman -U --noconfirm \
 ARG PANDOC_VERSION=3.1.8
 RUN curl -sSL https://github.com/jgm/pandoc/releases/download/${PANDOC_VERSION}/pandoc-${PANDOC_VERSION}-linux-amd64.tar.gz | \
     tar xz --strip-components 1 -C /usr/local
+
+# prime tectonic tex package cache with common packages
+# COPY --from=docker.io/rekka/tectonic /root/.cache/Tectonic/ /root/.cache/Tectonic
+RUN echo -e "# Test document!\n\nJust some markdown here." | \
+    pandoc --pdf-engine=tectonic -s - -f markdown -o /dev/null -t pdf
 
 WORKDIR /data
 ENTRYPOINT ["pandoc", "--pdf-engine=tectonic"]

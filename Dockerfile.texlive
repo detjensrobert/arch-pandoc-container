@@ -8,6 +8,10 @@ RUN yay -Sy --noconfirm --noeditmenu --nodiffmenu \
     mkdir /build/packages && \
     find /build/.cache/yay/ -name '*.pkg.tar.zst' | xargs -I _ mv _ /build/packages/
 
+# also create dummy pandoc package so filter deps are happy in final container
+RUN echo -e "pkgname=pandoc-dummy\npkgver=9.99\npkgrel=1\narch=('any')\nprovides=(pandoc pandoc-cli)" > PKGBUILD.pandoc-dummy && \
+    PKGDEST=/build/packages/ makepkg -p PKGBUILD.pandoc-dummy
+
 FROM docker.io/archlinux
 
 # add some csls
@@ -16,13 +20,11 @@ RUN mkdir -p /root/.pandoc/csl/ && \
     curl -sS https://github.com/citation-style-language/styles/raw/master/ieee.csl -o /root/.pandoc/csl/ieee.csl && \
     curl -sS https://github.com/citation-style-language/styles/raw/master/modern-language-association.csl -o /root/.pandoc/csl/mla.csl
 
-RUN pacman -Sy --noconfirm --cachedir=/tmp texlive-meta && \
+RUN pacman -Sy --noconfirm --cachedir=/tmp texlive-meta perl && \
     rm -rf /tmp/*
 
 COPY --from=builder /build/packages /tmp/packages
-RUN pacman -U --noconfirm \
-      --assume-installed pandoc-cli \
-      --cachedir=/tmp /tmp/packages/* && \
+RUN pacman -U --noconfirm --cachedir=/tmp /tmp/packages/* && \
     rm -rf /tmp/*
 
 # use upstream static binary to control version
