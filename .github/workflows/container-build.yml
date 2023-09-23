@@ -24,7 +24,7 @@ jobs:
         with:
           image: arch-pandoc
           tags: |
-            ${{ matrix.type == 'tectonic' && 'latest' }}
+            ${{ matrix.type == 'tectonic' && 'latest' || null }}
             ${{ matrix.type }}
             ${{ env.PANDOC_VERSION }}-${{ matrix.type }}
           containerfiles: ./Dockerfile.${{ matrix.type }}
