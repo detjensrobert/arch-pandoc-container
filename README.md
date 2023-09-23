@@ -20,13 +20,20 @@ container size, but may not work for all LaTeX packages.
 
 - `:latest`
 - `:<version>` (e.g. `:3.1.3`)
+- `:tectonic`
 - `:<version>-tectonic` (e.g. `:3.1.3-tectonic`)
 
 The `-texlive` tags have the more 'standard' [TeXLive](https://www.tug.org/texlive) installation, but at a much larger
 container size (over 2GB!).
 
-- `:latest-texlive`
+- `:texlive`
 - `:<version>-texlive` (e.g. `:3.1.3-texlive`)
+
+The `-typst` tags use the new [Typst](https://typst.app/) system, which can be much nicer to use than LaTeX at the cost
+of a much smaller community. Note this is its own system and *not* compatible with LaTeX!
+
+- `:typst`
+- `:<version>-typst` (e.g. `:3.1.3-typst`)
 
 Images are available both on [Dockerhub](https://hub.docker.com/r/detjensrobert/arch-pandoc) and on
 [GHCR](https://github.com/detjensrobert/arch-pandoc-container/pkgs/container/arch-pandoc):

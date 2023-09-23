@@ -12,37 +12,24 @@ env:
 jobs:
   build-images:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        type: [tectonic, texlive, typst]
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build Image (Tectonic)
-        id: build-tectonic
+      - name: Build Image
+        id: build_image
         uses: redhat-actions/buildah-build@v2
         with:
           image: arch-pandoc
           tags: |
-            latest
-            ${{ env.PANDOC_VERSION }}
-            ${{ env.PANDOC_VERSION }}-tectonic
-          containerfiles: ./Dockerfile
+            ${{ matrix.type == 'tectonic' && 'latest' }}
+            ${{ matrix.type }}
+            ${{ env.PANDOC_VERSION }}-${{ matrix.type }}
+          containerfiles: ./Dockerfile.${{ matrix.type }}
           build-args: |
-            PANDOC_VERSION=$${{ env.PANDOC_VERSION }}
-          oci: true
-          layers: true
-          extra-args:
-            --cache-from ghcr.io/${{ github.repository_owner }}/arch-pandoc
-
-      - name: Build Image (Texlive)
-        id: build-texlive
-        uses: redhat-actions/buildah-build@v2
-        with:
-          image: arch-pandoc
-          tags: |
-            latest-texlive
-            ${{ env.PANDOC_VERSION }}-texlive
-          containerfiles: ./Dockerfile.texlive
-          build-args: |
-            PANDOC_VERSION=$${{ env.PANDOC_VERSION }}
+            PANDOC_VERSION=${{ env.PANDOC_VERSION }}
           oci: true
           layers: true
           extra-args:
@@ -52,10 +39,9 @@ jobs:
         uses: redhat-actions/push-to-registry@v2
         id: push-ghcr
         with:
-          image: ${{ steps.build_image_tectonic.outputs.image }}
+          image: ${{ steps.build_image.outputs.image }}
           tags: |
-            ${{ steps.build_image_tectonic.outputs.tags }}
-            ${{ steps.build_image_texlive.outputs.tags }}
+            ${{ steps.build_image.outputs.tags }}
           registry: ghcr.io/${{ github.repository_owner }}
           username: ${{ github.actor }}
           password: ${{ github.token }}
@@ -64,10 +50,9 @@ jobs:
         uses: redhat-actions/push-to-registry@v2
         id: push-docker
         with:
-          image: ${{ steps.build_image_tectonic.outputs.image }}
+          image: ${{ steps.build_image.outputs.image }}
           tags: |
-            ${{ steps.build_image_tectonic.outputs.tags }}
-            ${{ steps.build_image_texlive.outputs.tags }}
+            ${{ steps.build_image.outputs.tags }}
           registry: docker.io/${{ secrets.DOCKERHUB_USERNAME }}
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
