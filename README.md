@@ -29,8 +29,7 @@ container size (over 2GB!).
 - `:texlive`
 - `:<version>-texlive` (e.g. `:3.1.3-texlive`)
 
-The `-typst` tags use the new [Typst](https://typst.app/) system, which can be much nicer to use than LaTeX at the cost
-of a much smaller community. Note this is its own system and *not* compatible with LaTeX!
+The `-typst` tags use the new [Typst](https://typst.app/) system, which can be much nicer to use than LaTeX. Note this is its own system and **not** compatible with LaTeX!
 
 - `:typst`
 - `:<version>-typst` (e.g. `:3.1.3-typst`)
